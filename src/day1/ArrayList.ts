@@ -20,7 +20,29 @@ export default class ArrayList<T> {
     }
 
     insertAt(item: T, idx: number): void {
-
+        // Don't know if this should add to the array or just
+        // change the value at the index. Sadly there are no
+        // tests for this in __tests__/arrayList.ts, so I'll
+        // just leave the logic for both below.
+        //
+        // if it adds to the array
+        // -----------------------------------------------------------
+        // this.length++;
+        // if (this.length <= this.capacity && this.length > idx) {
+        //     this.array[this.length - 1] = item;
+        //     return;
+        // }
+        // let tmp_arr = new Array(this.capacity * 2);
+        // for (let i = 0; i < this.length; i++) {
+        //     tmp_arr[i] = this.array[i];
+        // }
+        //
+        // if it just changes the value
+        // -----------------------------------
+        if (idx >= this.length || idx < 0) {
+            return;
+        }
+        this.array[idx] = item;
     }
 
     append(item: T): void {
@@ -45,10 +67,13 @@ export default class ArrayList<T> {
                 result = this.array[i];
                 this.length--;
                 index = i;
+                break;
             }
         }
-        if (index) {
-            for (; index < length - 1; index++) {
+        // just checking for index like if (index) is insufficient, as if (0) equals false. 
+        // experience in C finally coming in handy :)
+        if (index != undefined) {
+            for (; index < this.length - 1; index++) {
                 this.array[index] = this.array[index + 1];
             }
         }
@@ -59,13 +84,18 @@ export default class ArrayList<T> {
         if (idx >= this.length) {
             return undefined;
         }
-        return this.array[idx]
+        return this.array[idx];
     }
 
     removeAt(idx: number): T | undefined {
-        if (idx >= this.length) {
+        if (idx >= this.length || idx < 0) {
             return undefined;
         }
-        return this.array[idx];
+        const result = this.array[idx];
+        for (; idx < this.length - 1; idx++) {
+            this.array[idx] = this.array[idx + 1];
+        }
+        this.length--;
+        return result;
     }
 }
